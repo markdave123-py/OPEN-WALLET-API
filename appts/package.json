@@ -1,0 +1,48 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "**Duration** : 120 mins",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "nodemon app/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^18.13.0",
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "date-fns": "^2.29.3",
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.9",
+    "express-ejs-layouts": "^2.5.1",
+    "joi": "^17.7.0",
+    "jsonwebtoken": "^9.0.0",
+    "mysql2": "^3.1.1",
+    "pdf-creator-node": "^2.3.5",
+    "pdfkit": "^0.13.0",
+    "sequelize": "^6.28.0",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "tsc": "^2.0.4",
+    "typescript": "^4.9.5",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.13",
+    "@types/ejs": "^3.1.2",
+    "@types/express": "^4.17.17",
+    "@types/express-ejs-layouts": "^2.5.0",
+    "@types/jsonwebtoken": "^9.0.1",
+    "@types/pdfkit": "^0.12.8",
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "joi": "^17.7.0",
+    "mysql2": "^3.1.1",
+    "nodemon": "^2.0.20",
+    "typescript": "^4.9.5"
+  }
+}
