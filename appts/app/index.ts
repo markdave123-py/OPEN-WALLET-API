@@ -1,7 +1,8 @@
 import express, {Request,Response, NextFunction } from "express";
 import {config} from "./config/env";
 import { myDatabase } from "./config/database";
-import serveStatic from 'serve-static'
+import serveStatic from 'serve-static';
+import cors from 'cors';
 import { router } from "./routes";
 import { routerWallet } from "./routes/indexWallet";
 import { verifyJwt } from "./controllers/authUserController";
@@ -44,7 +45,6 @@ app.use('*', ( req: Request, res: Response, next: NextFunction) => {
         message: 'route not found'
     });
 });
-
 
 
 myDatabase.sync().then(() => {
