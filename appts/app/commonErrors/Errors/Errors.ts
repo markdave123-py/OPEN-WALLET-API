@@ -1,5 +1,5 @@
 import { HttpStatusCodes } from "../httpCode";
-import { ApiError } from "./ApiErrors";
+import { ApiError } from "./apiErrors";
 
 
 export class ConflictError extends ApiError {

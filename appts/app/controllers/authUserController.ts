@@ -26,7 +26,7 @@ export const handleLogin = async (req:Request, res:Response, next: NextFunction)
         const accessToken = jwt.sign(
             {"username": user.email},
             `${process.env.ACCESS_TOKEN_SECRET}`,
-            {"expiresIn": "600000s"}
+            {"expiresIn": "60s"}
         );
         // console.log(res);
         
