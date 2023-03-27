@@ -9,11 +9,18 @@ import { where } from 'sequelize';
 User.hasMany(Wallet);
 
 export const createNewWallet = async (req:Request, res: Response, next: NextFunction) =>{
-    const { currency } = req.body;
+    let currency = req.body.currency
 
     if (!currency){
         res.status(403).json("To create a wallet you need to specify the currency")
         throw new ForbiddenError("To create a wallet you need to specify the currency");
+    }
+
+    currency = currency.toLowerCase()
+
+    if (currency != "naira" || currency != "dollar"){
+        res.status(403).json("You can only create a Naria and Dollar account with us thanks")
+        throw new ForbiddenError("You can only create a Naria and Dollar account with us thanks");
     }
 
     let wallet = await Wallet.create({

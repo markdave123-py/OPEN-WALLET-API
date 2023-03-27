@@ -2,7 +2,7 @@ import { getUserId } from '../utils/utils';
 import { Wallet } from '../models/wallet';
 import { Deposit } from '../models/deposit';
 import { dollarRate } from '../utils/utils';
-import { NOT_FOUND } from '../commonErrors/Errors/Errors';
+import { NOT_FOUND, ForbiddenError} from '../commonErrors/Errors/Errors';
 import { HttpStatusCodes } from '../commonErrors/httpCode';
 import { NextFunction, Request, Response } from 'express';
 
@@ -15,13 +15,19 @@ let updatedWallet : any
 
 export const makeDeposit = async(req:Request, res: Response, next: NextFunction) => {
         walletId = req.params.id;
-        const currency = req.body.currency.toLowerCase();
+        let currency = req.body.currency
         const amount = req.body.amount
 
-        if (!(currency) || !amount ){
+        if (!currency || !amount ){
             return res.status(403).json({"message":"Provide the currency and amount to be deposited"});
         }
+        currency = currency.toLowerCase()
 
+        if (currency != "naira" || currency != "dollar"){
+            res.status(403).json("You can only create a Naria and Dollar account with us thanks")
+            throw new ForbiddenError("You can only create a Naria and Dollar account with us thanks");
+        }
+    
         const wallets = await Wallet.findAll();
 
         const wallet = wallets.find((wallet) => wallet.id === walletId)

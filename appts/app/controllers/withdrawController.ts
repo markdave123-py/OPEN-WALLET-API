@@ -2,7 +2,7 @@ import { Wallet } from '../models/wallet';
 import { getUserId } from '../utils/utils';
 import { Withdrawal } from '../models/withdrawal.'; 
 import { dollarRate } from '../utils/utils';
-import { NOT_FOUND } from '../commonErrors/Errors/Errors';
+import { NOT_FOUND, ForbiddenError } from '../commonErrors/Errors/Errors';
 import { HttpStatusCodes } from '../commonErrors/httpCode';
 import { NextFunction, Request, Response } from 'express';
 
@@ -13,13 +13,21 @@ export const makeWithdrawal = async(req: Request, res: Response, next: NextFunct
     
     const walletId = req.params.id
     const amount = req.body.amount
-    const currency = req.body.currency.toLowerCase()
+    let currency = req.body.currency
 
     if (!amount || !currency) {
         res.status(404).json({"message": "pls provide the amount and currency of the withdrawal!!"});
         throw new NOT_FOUND(" Amount and currency not provided");
     }
 
+    currency = currency.toLowerCase()
+
+    if (currency != "naira" || currency != "dollar"){
+        res.status(403).json("You can only withdraw Naria or Dollar account with us thanks")
+        throw new ForbiddenError("You can only withdraw a Naria or Dollar account with us thanks");
+    }
+
+   
     const wallets = await Wallet.findAll({where:{UserId: await getUserId()}});
 
     if (wallets.length == 0){
