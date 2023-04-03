@@ -4,7 +4,6 @@ import { getUserId, dollarRate } from '../utils/utils';
 import { ForbiddenError, SERVER_ERROR } from '../commonErrors/Errors/Errors';
 import { HttpStatusCodes } from '../commonErrors/httpCode';
 import { NextFunction, Request, Response } from 'express';
-import { where } from 'sequelize';
 
 User.hasMany(Wallet);
 
