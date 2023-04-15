@@ -1,7 +1,7 @@
 import { Wallet } from '../models/wallet';
 import { Transfer } from '../models/transfer';
 import { dollarRate } from '../utils/utils';
-import { NOT_FOUND } from '../commonErrors/Errors/Errors';
+import { NOT_FOUND, ForbiddenError } from '../commonErrors/Errors/Errors';
 import { HttpStatusCodes } from '../commonErrors/httpCode';
 import { NextFunction, Request, Response } from 'express';
 
@@ -17,6 +17,11 @@ export const makeTransfer = async(req: Request, res:Response, next: NextFunction
         res.status(404).json({"message": "pls provide the necessary informations to perform ur transfer"});
         throw new NOT_FOUND("The necessary informations are not provided");
     }
+
+    if (transferAmount < 0){
+            res.status(403).json("you can't deposit an amount less than zero");
+            throw new ForbiddenError("you can't deposit an amount less than zero")
+        }
 
     const wallets = await Wallet.findAll();
 

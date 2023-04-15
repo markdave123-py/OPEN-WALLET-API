@@ -27,6 +27,11 @@ export const makeDeposit = async(req:Request, res: Response, next: NextFunction)
             res.status(403).json("You can only create a Naria and Dollar account with us thanks")
             throw new ForbiddenError("You can only create a Naria and Dollar account with us thanks");
         }
+
+        if (amount < 0){
+            res.status(403).json("you can't deposit an amount less than zero");
+            throw new ForbiddenError("you can't deposit an amount less than zero")
+        }
     
         const wallets = await Wallet.findAll();
 

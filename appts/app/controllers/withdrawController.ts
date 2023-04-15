@@ -27,6 +27,11 @@ export const makeWithdrawal = async(req: Request, res: Response, next: NextFunct
         throw new ForbiddenError("You can only withdraw a Naria or Dollar account with us thanks");
     }
 
+    if (amount < 0){
+            res.status(403).json("you can't deposit an amount less than zero");
+            throw new ForbiddenError("you can't deposit an amount less than zero")
+        }
+
    
     const wallets = await Wallet.findAll({where:{UserId: await getUserId()}});
 
