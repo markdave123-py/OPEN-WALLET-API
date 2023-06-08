@@ -28,7 +28,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(serveStatic(path.join(__dirname, 'public')));
 app.use('/docs', express.static(path.join(__dirname, 'docs')))
-app.use(pdfRouter)
+app.use(pdfRouter);
 
 
 app.use('/', router);
