@@ -23,10 +23,12 @@ export const makeDeposit = async(req:Request, res: Response, next: NextFunction)
         }
         currency = currency.toLowerCase()
 
-        if (currency != "naira" || currency != "dollar"){
-            res.status(403).json("You can only create a Naria and Dollar account with us thanks")
-            throw new ForbiddenError("You can only create a Naria and Dollar account with us thanks");
-        }
+        const acceptedCurrencies = ['naira' ,'dollar']
+
+    if (!acceptedCurrencies.includes(currency)){
+        res.status(403).json("You can only create a Naria and Dollar account with us thanks");
+        throw new ForbiddenError("You can only create a Naria and Dollar account with us thanks");
+    }
 
         if (amount < 0){
             res.status(403).json("you can't deposit an amount less than zero");

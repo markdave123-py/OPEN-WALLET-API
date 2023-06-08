@@ -15,16 +15,16 @@ export const makeWithdrawal = async(req: Request, res: Response, next: NextFunct
     const amount = req.body.amount
     let currency = req.body.currency
 
-    if (!amount || !currency) {
-        res.status(404).json({"message": "pls provide the amount and currency of the withdrawal!!"});
-        throw new NOT_FOUND(" Amount and currency not provided");
-    }
+   
 
     currency = currency.toLowerCase()
 
-    if (currency != "naira" || currency != "dollar"){
-        res.status(403).json("You can only withdraw Naria or Dollar account with us thanks")
-        throw new ForbiddenError("You can only withdraw a Naria or Dollar account with us thanks");
+
+    const acceptedCurrencies = ['naira' ,'dollar']
+
+    if (!acceptedCurrencies.includes(currency)){
+        res.status(403).json("You can only create a Naria and Dollar account with us thanks");
+        throw new ForbiddenError("You can only create a Naria and Dollar account with us thanks");
     }
 
     if (amount < 0){

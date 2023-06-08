@@ -9,10 +9,17 @@ export const createNewUser = async (req: Request, res: Response, next: NextFunct
     const {email, password, firstName, lastName} = req.body ;
 
     if (!email || !firstName || !lastName || !password) {
+        
         throw new ForbiddenError("Provide the required credentials!!");
 
     }
 
+    let userExist = await User.findOne({where:{email: email}})
+
+    if (userExist){
+        res.status(403).json({"message":"User with this email already exists!!"})
+        throw new ForbiddenError("User with email already exists!!");
+    }
         const hashedPassword = await bcrypt.hash(password, 10); 
     
         let user = await User.create({

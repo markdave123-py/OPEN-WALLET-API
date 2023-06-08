@@ -16,9 +16,11 @@ export const createNewWallet = async (req:Request, res: Response, next: NextFunc
     }
 
     currency = currency.toLowerCase()
+    
+    const acceptedCurrencies = ['naira' ,'dollar']
 
-    if (currency != "naira" || currency != "dollar"){
-        res.status(403).json("You can only create a Naria and Dollar account with us thanks")
+    if (!acceptedCurrencies.includes(currency)){
+        res.status(403).json("You can only create a Naria and Dollar account with us thanks");
         throw new ForbiddenError("You can only create a Naria and Dollar account with us thanks");
     }
 
