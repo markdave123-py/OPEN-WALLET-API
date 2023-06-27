@@ -87,23 +87,26 @@ export const getAllDeposit = async(req: Request, res: Response, next: NextFuncti
         const walletId = req.params.id;
 
         if(!walletId){
-            return res.status(404).json({"message": "pls specify the id of the wallet"})
+            return res.status(404).json({"message": "pls specify the id of the wallet"});
             
         } 
 
-        const wallets = await Wallet.findAll({where:{UserId: await getUserId()}});
+        // const wallet = await Wallet.findAll({where:
+        //                                     {UserId: await getUserId(),
+        //                                         id: walletId
+        //                                     }});
 
-        let wallet = wallets.find((wallet: any)=> {
-            return wallet.id === walletId });
+        // let wallet = wallets.find((wallet: any)=> {
+        //     return wallet.id === walletId });
 
-        if(!wallet){
-                res.status(404).json({"message": "NO wallet with the specified id or you did not create this wallet"});
-                throw new NOT_FOUND("NO wallet with the specified id");
-            }
-        const deposits = await Deposit.findAll();
+        // if(!wallet){
+        //         res.status(404).json({"message": "NO wallet with the specified id or you did not create this wallet"});
+        //         throw new NOT_FOUND("NO wallet with the specified id");
+        //     }
+        const requiredDeposits = await Deposit.findAll({where:{WalletId: walletId}});
 
-        const requiredDeposits = deposits.filter((deposit: any)=> {
-            return deposit.WalletId === walletId })
+        // const requiredDeposits = deposits.filter((deposit: any)=> {
+        //     return deposit.WalletId === walletId })
         
         if(!requiredDeposits){
             return res.status(404).json({"message": "No deposit with specified id "})     
@@ -117,30 +120,31 @@ export const getAllDeposit = async(req: Request, res: Response, next: NextFuncti
 }
 
 export const getOneDeposit = async(req: Request, res: Response, next: NextFunction) => {
-        const depostId = req.params.id
+        const depositId = req.params.id
         const walletId = req.params.wallet_id
 
-        if (!depostId || !walletId) return res.status(404).json({"message": "pls specify the id of the wallet and deposit"})
+        if (!depositId || !walletId) return res.status(404).json({"message": "pls specify the id of the wallet and deposit"})
 
-        const wallets = await Wallet.findAll({where:{UserId: await getUserId()}})
+        // const wallets = await Wallet.findAll({where:{UserId: await getUserId()}})
 
-        if (wallets.length === 0) return res.json({'message':'you dont have a wallet, create one deposit then you can get a deposit'})
+        // if (wallets.length === 0) return res.json({'message':'you dont have a wallet, create one deposit then you can get a deposit'})
         
-        
-        const wallet = wallets.filter((card)=>{ return card.id === walletId});
+        // let wallet = await Wallet.findOne({where:{id: walletId}});
+        // const wallet = wallets.filter((card)=>{ return card.id === walletId});
 
-        if(wallet.length === 0) return res.json({'message':'no wallet with this id created by this user'})
+        // if(wallet.length === 0) return res.json({'message':'no wallet with this id created by this user'})
+        const requiredDeposit = await Deposit.findOne({where:{id: depositId}});
 
-        const deposits = await Deposit.findAll();
+        // const deposits = await Deposit.findAll();
 
-        const requiredDeposits = deposits.filter((deposit: any)=> {
-            return deposit.WalletId === walletId })
+        // const requiredDeposits = deposits.filter((deposit: any)=> {
+        //     return deposit.WalletId === walletId })
 
-        const requiredDeposit = requiredDeposits.filter((deposit: any ) => {
-            return deposit.id === depostId 
-        })
+        // const requiredDeposit = requiredDeposits.filter((deposit: any ) => {
+        //     return deposit.id === depositId 
+        // })
 
-        if(!requiredDeposits){
+        if(!requiredDeposit){
             return res.status(404).json({"message": "No deposit with specified id "})     
         }
 

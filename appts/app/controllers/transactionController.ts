@@ -14,33 +14,37 @@ export const getAllTransactions = async (req: Request, res:Response, next: NextF
 
     const walletId = req.params.id
 
-    const wallets = await Wallet.findAll({where:{UserId: await getUserId()}});
-    if (wallets.length === 0) return res.json({'message':'you dont have a wallet, create one, deposit the you can withdraw' })
+    // const wallets = await Wallet.findAll({where:{UserId: await getUserId()}});
+    // if (wallets.length === 0) return res.json({'message':'you dont have a wallet, create one, deposit the you can withdraw' })
 
 
-    let wallet = wallets.find((wallet: any) => {
-        return wallet.id === walletId
-        }) 
+    // let wallet = wallets.find((wallet: any) => {
+    //     return wallet.id === walletId
+    //     }) 
 
-    if (!wallet){
-        res.status(404).json({"message": "No wallet with specified id from this user "});
-        }
+    // if (!wallet){
+    //     res.status(404).json({"message": "No wallet with specified id from this user "});
+    //     }
 
-    const withdrawals = await Withdrawal.findAll();
+    const requiredwithdrawals = await Withdrawal.findAll({where:{WalletId:walletId}});
 
-    const requiredwithdrawals = withdrawals.filter((withdrawal: any)=> {
-        return withdrawal.WalletId === walletId 
-        })
+    // const requiredwithdrawals = withdrawals.filter((withdrawal: any)=> {
+    //     return withdrawal.WalletId === walletId 
+    //     })
 
-    const transfers = await Transfer.findAll();
+    const requiredTransfers = await Transfer.findAll({where:{WalletId:walletId}});
 
-    const requiredTransfers = transfers.filter((Transfer: any)=> {
-        return Transfer.WalletId === walletId })
+    // const requiredTransfers = transfers.filter((Transfer: any)=> {
+    //     return Transfer.WalletId === walletId })
 
-    const deposits = await Deposit.findAll();
+    const requiredDeposits = await Deposit.findAll({where:{WalletId:walletId}});
 
-    const requiredDeposits = deposits.filter((deposit: any)=> {
-        return deposit.WalletId === walletId })
+    // const requiredDeposits = deposits.filter((deposit: any)=> {
+    //     return deposit.WalletId === walletId })
+
+    if (!requiredDeposits && !requiredTransfers && !requiredwithdrawals){
+        res.json({"message": "You have no transactions!!"})
+    }
 
     Transaction = {
         Deposits: requiredDeposits,
