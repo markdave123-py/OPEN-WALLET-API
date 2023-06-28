@@ -12,7 +12,7 @@ export const createNewWallet = async (req:Request, res: Response, next: NextFunc
 
     if (!currency){
         res.status(403).json("To create a wallet you need to specify the currency")
-        throw new ForbiddenError("To create a wallet you need to specify the currency");
+       
     }
 
     currency = currency.toLowerCase()
@@ -21,7 +21,7 @@ export const createNewWallet = async (req:Request, res: Response, next: NextFunc
 
     if (!acceptedCurrencies.includes(currency)){
         res.status(403).json("You can only create a Naria and Dollar account with us thanks");
-        throw new ForbiddenError("You can only create a Naria and Dollar account with us thanks");
+        
     }
 
     let wallet = await Wallet.create({

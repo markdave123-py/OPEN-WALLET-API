@@ -24,12 +24,12 @@ export const makeWithdrawal = async(req: Request, res: Response, next: NextFunct
 
     if (!acceptedCurrencies.includes(currency)){
         res.status(403).json("You can only create a Naria and Dollar account with us thanks");
-        throw new ForbiddenError("You can only create a Naria and Dollar account with us thanks");
+        
     }
 
     if (amount < 0){
             res.status(403).json("you can't deposit an amount less than zero");
-            throw new ForbiddenError("you can't deposit an amount less than zero")
+            
         }
 
    
@@ -119,7 +119,7 @@ export const getAllWithdrawals = async(req: Request, res: Response, next: NextFu
 
     if(!wallet){
             res.status(404).json({"message": "NO wallet with the specified id or you did not create this wallet"});
-            throw new NOT_FOUND("NO wallet with the specified id");
+            
         }
         
     const withdrawals = await Withdrawal.findAll();

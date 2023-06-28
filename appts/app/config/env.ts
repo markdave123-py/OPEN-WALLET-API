@@ -16,5 +16,6 @@ export const config = Object.freeze({
         
 
     },
+    ApiKey: process.env.API_KEY as string,
 });
 

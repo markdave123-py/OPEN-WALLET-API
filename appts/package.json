@@ -20,6 +20,7 @@
     "joi": "^17.7.0",
     "jsonwebtoken": "^9.0.0",
     "mysql2": "^3.1.1",
+    "node-fetch": "^3.3.1",
     "pdf-creator-node": "^2.3.5",
     "pdfkit": "^0.13.0",
     "sequelize": "^6.28.0",

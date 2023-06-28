@@ -15,12 +15,12 @@ export const makeTransfer = async(req: Request, res:Response, next: NextFunction
 
     if (!transferAmount ||  !destinationId) {
         res.status(404).json({"message": "pls provide the necessary informations to perform ur transfer"});
-        throw new NOT_FOUND("The necessary informations are not provided");
+        
     }
 
     if (transferAmount < 0){
             res.status(403).json("you can't deposit an amount less than zero");
-            throw new ForbiddenError("you can't deposit an amount less than zero")
+            
         }
 
     const sourceWallet = await Wallet.findOne({where:{id: source_id}});
@@ -35,7 +35,7 @@ export const makeTransfer = async(req: Request, res:Response, next: NextFunction
 
     if(!sourceWallet || !destinationWallet){
         res.status(HttpStatusCodes.NOT_FOUND).json({"message": "Source or destination wallets not found"});
-        throw new NOT_FOUND("Source or destination wallets not found");
+        
     }
     let sourceCurrency = sourceWallet?.currency.toLowerCase()
     let sourceAmount: any =sourceWallet?.amount
