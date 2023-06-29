@@ -1,8 +1,8 @@
-import { getUserId } from '../utils/utils';
+import { converter } from '../utils/exchangeRate';
 import { Wallet } from '../models/wallet';
 import { Deposit } from '../models/deposit';
 import { dollarRate } from '../utils/utils';
-import { NOT_FOUND, ForbiddenError} from '../commonErrors/Errors/Errors';
+
 import { HttpStatusCodes } from '../commonErrors/httpCode';
 import { NextFunction, Request, Response } from 'express';
 
@@ -13,6 +13,7 @@ export let  walletId : any
 
 let updatedWallet : any
 
+
 export const makeDeposit = async(req:Request, res: Response, next: NextFunction) => {
         walletId = req.params.id;
         let currency = req.body.currency
@@ -20,50 +21,72 @@ export const makeDeposit = async(req:Request, res: Response, next: NextFunction)
 
         if (!currency || !amount ){
             return res.status(403).json({"message":"Provide the currency and amount to be deposited"});
+
         }
-        currency = currency.toLowerCase()
 
-        const acceptedCurrencies = ['naira' ,'dollar']
-
-    if (!acceptedCurrencies.includes(currency)){
-        res.status(403).json("You can only create a Naria and Dollar account with us thanks");
-        
-    }
+        let wallet = await Wallet.findOne({where:{id: walletId}});
 
         if (amount < 0){
             res.status(403).json("you can't deposit an amount less than zero");
 
         }
 
-        let wallet = await Wallet.findOne({where:{id: walletId}});
-    
-
         if(!wallet){
                 res.status(404).json({"message": "NO wallet with the specified id  or You did not create the wallet with this id"});
         }
 
+        currency = currency.toLowerCase()
+
         let walletCurrency = wallet!.currency.toLowerCase()
 
+        try {
 
-    if ( currency === walletCurrency){
-        updatedWallet = await wallet?.update(
-            { amount: wallet?.amount + amount },
-            { where: { id: walletId}}
-        )
+            let response: any
+
+            if (currency !== walletCurrency){
+                response = await converter.getConversion(currency, walletCurrency, amount);
+                
+                let convertedAmount = response.result
+                updatedWallet = await wallet?.update(
+                    { amount: wallet?.amount + convertedAmount },
+                    { where: { id: walletId}}
+                )
+                
+            }
+
+            if( currency === walletCurrency){
+
+                updatedWallet = await wallet?.update(
+                    { amount: wallet?.amount + amount },
+                    { where: { id: walletId}}
+                )
+
+            }
+
+           
+
+            
+        } catch (error) {
+
+            console.log(error)
+            res.status(500).json("internal server error!!")
+            
+        }
+
+
+
+        const acceptedCurrencies = ['naira' ,'dollar']
+
+
+    if (!acceptedCurrencies.includes(currency)){
+        res.status(403).json("You can only create a Naria and Dollar account with us thanks");
+        
     }
 
+        
 
-    if (currency === "naira" && walletCurrency === "dollar"){
-        updatedWallet = await wallet?.update(
-            { amount: wallet?.amount + (amount / dollarRate)},
-            { where: { id: walletId}}
-    )}
+        
 
-    if (currency === "dollar" && walletCurrency === "naira"){
-        updatedWallet = await wallet?.update(
-            { amount: wallet?.amount + (amount * dollarRate) },
-            { where: { id: walletId}}
-    )}
 
 
     let deposit = await Deposit.create({
@@ -79,8 +102,12 @@ export const makeDeposit = async(req:Request, res: Response, next: NextFunction)
             data: updatedWallet
         })
 
-    }
+    
 
+}
+
+
+        
 
 export const getAllDeposit = async(req: Request, res: Response, next: NextFunction) => {
         const walletId = req.params.id;
@@ -152,4 +179,4 @@ export const getOneDeposit = async(req: Request, res: Response, next: NextFuncti
             data: requiredDeposit
         })
 
-}
+    }

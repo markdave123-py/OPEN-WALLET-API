@@ -14,17 +14,17 @@ export const getAllTransactions = async (req: Request, res:Response, next: NextF
 
     const walletId = req.params.id
 
-    // const wallets = await Wallet.findAll({where:{UserId: await getUserId()}});
-    // if (wallets.length === 0) return res.json({'message':'you dont have a wallet, create one, deposit the you can withdraw' })
+    const wallet = await Wallet.findOne({where:{UserId: await getUserId(), id:walletId}});
+    
 
 
     // let wallet = wallets.find((wallet: any) => {
     //     return wallet.id === walletId
     //     }) 
 
-    // if (!wallet){
-    //     res.status(404).json({"message": "No wallet with specified id from this user "});
-    //     }
+    if (!wallet){
+        return res.status(404).json({"message": "No wallet with specified id from this user "});
+        }
 
     const requiredwithdrawals = await Withdrawal.findAll({where:{WalletId:walletId}});
 

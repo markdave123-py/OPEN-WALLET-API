@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { controllerHandler } from "../middlewares/controllerHandler";
 import { transerSchema } from "../validation/schemas/schemas";
-import { makeTransfer, getAllTransfers, getOneTransfer } from "../controllers/transferController";
+import { makeTransfer, getAllTransfers, getOneTransfer } from "../controllers/transfer2Controller";
 
 export const transerRouter = Router()
 
