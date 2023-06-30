@@ -17,12 +17,12 @@ export const createNewWallet = async (req:Request, res: Response, next: NextFunc
 
     currency = currency.toLowerCase()
     
-    const acceptedCurrencies = ['naira' ,'dollar']
+    // const acceptedCurrencies = ['naira' ,'dollar']
 
-    if (!acceptedCurrencies.includes(currency)){
-        res.status(403).json("You can only create a Naria and Dollar account with us thanks");
+    // if (!acceptedCurrencies.includes(currency)){
+    //     res.status(403).json("You can only create a Naria and Dollar account with us thanks");
         
-    }
+    // }
 
     let wallet = await Wallet.create({
         currency,

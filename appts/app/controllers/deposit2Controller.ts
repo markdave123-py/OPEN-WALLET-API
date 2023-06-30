@@ -1,7 +1,9 @@
 import { converter } from '../utils/exchangeRate';
+import _fetch from 'isomorphic-fetch';
 import { Wallet } from '../models/wallet';
 import { Deposit } from '../models/deposit';
-import { dollarRate } from '../utils/utils';
+import { config } from '../config/env'
+
 
 import { HttpStatusCodes } from '../commonErrors/httpCode';
 import { NextFunction, Request, Response } from 'express';
@@ -15,6 +17,7 @@ let updatedWallet : any
 
 
 export const makeDeposit = async(req:Request, res: Response, next: NextFunction) => {
+    console.log(config.ApiKey)
         walletId = req.params.id;
         let currency = req.body.currency
         const amount = req.body.amount
@@ -39,14 +42,20 @@ export const makeDeposit = async(req:Request, res: Response, next: NextFunction)
 
         let walletCurrency = wallet!.currency.toLowerCase()
 
-        try {
+        
 
-            let response: any
 
             if (currency !== walletCurrency){
-                response = await converter.getConversion(currency, walletCurrency, amount);
+                const url = `https://api.apilayer.com/exchangerates_data/convert?to=${walletCurrency}&from=${currency}&amount=${amount}`;
+                let convertedAmount 
+                const response = await _fetch(url, converter.requestOptions)
+                const result = await response.result;
+                convertedAmount = parseFloat(result);
+                //.catch((err:any) => console.log(err))
                 
-                let convertedAmount = response.result
+                
+                console.log(currency,amount,walletCurrency)
+                console.log(`this is the result ${convertedAmount}`)
                 updatedWallet = await wallet?.update(
                     { amount: wallet?.amount + convertedAmount },
                     { where: { id: walletId}}
@@ -66,22 +75,13 @@ export const makeDeposit = async(req:Request, res: Response, next: NextFunction)
            
 
             
-        } catch (error) {
+        // } catch (error) {
 
-            console.log(error)
-            res.status(500).json("internal server error!!")
+        //     console.log(error)
+        //     res.status(500).json("internal server error!!")
             
-        }
+        // }
 
-
-
-        const acceptedCurrencies = ['naira' ,'dollar']
-
-
-    if (!acceptedCurrencies.includes(currency)){
-        res.status(403).json("You can only create a Naria and Dollar account with us thanks");
-        
-    }
 
         
 
