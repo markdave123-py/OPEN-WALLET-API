@@ -2,7 +2,7 @@ import { converter } from '../utils/exchangeRate';
 import _fetch from 'isomorphic-fetch';
 import { Wallet } from '../models/wallet';
 import { Deposit } from '../models/deposit';
-import { config } from '../config/env'
+import { getUserId } from '../utils/utils';
 
 
 import { HttpStatusCodes } from '../commonErrors/httpCode';
@@ -17,7 +17,7 @@ let updatedWallet : any
 
 
 export const makeDeposit = async(req:Request, res: Response, next: NextFunction) => {
-    console.log(config.ApiKey)
+
         walletId = req.params.id;
         let currency = req.body.currency
         const amount = req.body.amount
@@ -45,42 +45,37 @@ export const makeDeposit = async(req:Request, res: Response, next: NextFunction)
         
 
 
-            if (currency !== walletCurrency){
-                const url = `https://api.apilayer.com/exchangerates_data/convert?to=${walletCurrency}&from=${currency}&amount=${amount}`;
-                let convertedAmount 
-                const response = await _fetch(url, converter.requestOptions)
-                const result = await response.result;
-                convertedAmount = parseFloat(result);
-                //.catch((err:any) => console.log(err))
+            // if (currency !== walletCurrency){
+                
+            //     //.catch((err:any) => console.log(err))
                 
                 
-                console.log(currency,amount,walletCurrency)
-                console.log(`this is the result ${convertedAmount}`)
+            //     console.log(currency,amount,walletCurrency)
+            //     console.log(`this is the result ${convertedAmount}`)
+            //     updatedWallet = await wallet?.update(
+            //         { amount: wallet?.amount + convertedAmount },
+            //         { where: { id: walletId}}
+            //     )
+                
+            // }
+
+            try{
+                let response = currency !== walletCurrency
+                ? await converter.getConversion(currency, walletCurrency, +amount)
+                : "";
+
+                const convertedAmount = response.result ?? amount
+
+
                 updatedWallet = await wallet?.update(
                     { amount: wallet?.amount + convertedAmount },
                     { where: { id: walletId}}
                 )
-                
-            }
 
-            if( currency === walletCurrency){
-
-                updatedWallet = await wallet?.update(
-                    { amount: wallet?.amount + amount },
-                    { where: { id: walletId}}
-                )
-
-            }
-
-           
-
-            
-        // } catch (error) {
-
-        //     console.log(error)
-        //     res.status(500).json("internal server error!!")
-            
-        // }
+            }catch (err) {
+            console.log(err);
+            res.status(500).json({"message": "internal server error!!"});
+        }
 
 
         
@@ -117,18 +112,16 @@ export const getAllDeposit = async(req: Request, res: Response, next: NextFuncti
             
         } 
 
-        // const wallet = await Wallet.findAll({where:
-        //                                     {UserId: await getUserId(),
-        //                                         id: walletId
-        //                                     }});
+        const wallet = await Wallet.findAll({where:
+                                            {UserId: await getUserId(),
+                                                id: walletId
+                                            }});
 
-        // let wallet = wallets.find((wallet: any)=> {
-        //     return wallet.id === walletId });
 
-        // if(!wallet){
-        //         res.status(404).json({"message": "NO wallet with the specified id or you did not create this wallet"});
-        //         throw new NOT_FOUND("NO wallet with the specified id");
-        //     }
+        if(!wallet){
+                res.status(404).json({"message": "NO wallet with the specified id or you did not create this wallet"});
+            
+            }
         const requiredDeposits = await Deposit.findAll({where:{WalletId: walletId}});
 
         // const requiredDeposits = deposits.filter((deposit: any)=> {

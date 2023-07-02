@@ -1,7 +1,6 @@
 import { Wallet } from '../models/wallet';
 import { getUserId } from '../utils/utils';
 import { Withdrawal } from '../models/withdrawal.'; 
-import { dollarRate } from '../utils/utils';
 import { NOT_FOUND, ForbiddenError } from '../commonErrors/Errors/Errors';
 import { HttpStatusCodes } from '../commonErrors/httpCode';
 import { NextFunction, Request, Response } from 'express';
@@ -63,27 +62,27 @@ export const makeWithdrawal = async(req: Request, res: Response, next: NextFunct
             
         }
     
-        if (currency === "naira" && walletCurrency === "dollar"){
-            if( amount > (walletAmount * dollarRate)){
-                return res.json({"message": "INSUFFICIENT FUNDS"})
-            }else{
-                updatedWallet = await wallet?.update(
-                    { amount: wallet?.amount - (amount / dollarRate)},
-                    { where: { id: walletId}}
-                )
-            }
-        }
+        // if (currency === "naira" && walletCurrency === "dollar"){
+        //     if( amount > (walletAmount * dollarRate)){
+        //         return res.json({"message": "INSUFFICIENT FUNDS"})
+        //     }else{
+        //         updatedWallet = await wallet?.update(
+        //             { amount: wallet?.amount - (amount / dollarRate)},
+        //             { where: { id: walletId}}
+        //         )
+        //     }
+        // }
     
-        if (currency === "dollar" && walletCurrency === "naira"){
-            if( amount > (walletAmount / dollarRate)){
-                return res.json({"message": "INSUFFICIENT FUNDS"})
-            }else{
-                updatedWallet = await wallet?.update(
-                    { amount: wallet?.amount - (amount * dollarRate) },
-                    { where: { id: walletId}}
-                )
-            }
-        }
+        // if (currency === "dollar" && walletCurrency === "naira"){
+        //     if( amount > (walletAmount / dollarRate)){
+        //         return res.json({"message": "INSUFFICIENT FUNDS"})
+        //     }else{
+        //         updatedWallet = await wallet?.update(
+        //             { amount: wallet?.amount - (amount * dollarRate) },
+        //             { where: { id: walletId}}
+        //         )
+        //     }
+        // }
     
     
     

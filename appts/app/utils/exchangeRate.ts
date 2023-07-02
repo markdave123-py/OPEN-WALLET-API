@@ -1,5 +1,6 @@
 import fetch from  'isomorphic-fetch'
 import { config } from '../config/env'
+import { error } from 'console';
 
 
 export const converter = {
@@ -16,10 +17,9 @@ export const converter = {
     getConversion: async (from: any, to: any, amount: any) =>{
 
         const url = `https://api.apilayer.com/exchangerates_data/convert?to=${to}&from=${from}&amount=${amount}`;
-        await fetch(url, converter.requestOptions)
-        .then((result:any)=> {return result})
-        .catch((err:any) => console.log(err))
-
+        const response = await fetch(url, converter.requestOptions)
+        return response.status === 200 ? response.json() : error
+        
         
         
     },

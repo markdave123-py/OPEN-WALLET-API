@@ -1,9 +1,8 @@
 import { Wallet } from '../models/wallet';
 import { Transfer } from '../models/transfer';
-import { dollarRate } from '../utils/utils';
-import { NOT_FOUND, ForbiddenError } from '../commonErrors/Errors/Errors';
 import { HttpStatusCodes } from '../commonErrors/httpCode';
 import { NextFunction, Request, Response } from 'express';
+import { converter } from '../utils/exchangeRate';
 
 Wallet.hasMany(Transfer);
 
@@ -19,7 +18,7 @@ export const makeTransfer = async(req: Request, res:Response, next: NextFunction
     }
 
     if (transferAmount < 0){
-            res.status(403).json("you can't deposit an amount less than zero");
+            res.status(403).json("you can't transfer an amount less than zero");
             
         }
 
@@ -41,55 +40,38 @@ export const makeTransfer = async(req: Request, res:Response, next: NextFunction
     let sourceAmount: any =sourceWallet?.amount
 
     let destinationCurrency = destinationWallet?.currency.toLowerCase()
-    // let destinationAmount: any = destinationWallet?.amount
 
-    if ( sourceCurrency === destinationCurrency){
-        if ( sourceAmount < transferAmount){
-            return res.json({"message": "INSUFFICIENT FUNDS"})
-        }else{
-            updatedWallet = await sourceWallet?.update(
-                { amount: sourceWallet?.amount - transferAmount },
-                { where: { id: source_id}})
 
-            await destinationWallet?.update(
-                {amount: destinationWallet?.amount + transferAmount},
-                { where: {id: destinationId}}
-            )
-        }
-    }
+    try{
+            let response = sourceCurrency !== destinationCurrency
+                ? await converter.getConversion(sourceCurrency,destinationCurrency,  +transferAmount)
+                : "";
 
-    if (sourceCurrency === "naira" && destinationCurrency === "dollar"){
-        if( transferAmount > sourceAmount ){
-            return res.json(
-                {"message": "INSUFFICIENT FUNDS make sure ur transer amount in dollors and is less then or equal to ur acc balance"})
-        }else{
-            updatedWallet = await sourceWallet?.update(
-                { amount: sourceWallet?.amount - transferAmount },
-                { where: { id: source_id}}
-            )
-            await destinationWallet?.update(
-                {amount: destinationWallet?.amount + (transferAmount / dollarRate)},
-                {where: { id: destinationId }}
-            )
-        }
-    }
+            const convertedAmount = response.result ?? transferAmount
+            console.log(`the from is ${sourceCurrency} the to is ${destinationCurrency}  transfer amount is ${transferAmount} converted is ${convertedAmount}`)
 
-    if (sourceCurrency === "dollar" && destinationCurrency === "naira"){
-        if( transferAmount > sourceAmount ){
-            return res.json(
-                {"message": "INSUFFICIENT FUNDS make sure ur transer amount  in naira and is less then or equal to ur acc balance"
-            })
-        }else{
-            updatedWallet = await sourceWallet?.update(
-                { amount: sourceWallet?.amount - transferAmount },
-                { where: { id: source_id}}
-            )
-            await destinationWallet?.update(
-                {amount: destinationWallet?.amount + (transferAmount * dollarRate)},
-                {where: { id: destinationId }}
-            )
-        }
-    }
+            if(sourceAmount < transferAmount){
+                    return res.status(403).json({"message": "Insufficient funds"})
+            }else{
+                updatedWallet = await sourceWallet?.update(
+                                { amount: sourceWallet?.amount - transferAmount },
+                                { where: { id: source_id}}
+                            )
+
+                await destinationWallet?.update(
+                                {amount: destinationWallet?.amount + convertedAmount},
+                                { where: {id: destinationId}}   
+                               
+                            )
+                }
+
+
+
+            }catch (err) {
+            console.log(err);
+            res.status(500).json({"message": "internal server error!!"});
+            }
+
 
     let transfer = await Transfer.create({
        amount: transferAmount,
@@ -113,15 +95,15 @@ export const getAllTransfers = async(req: Request, res: Response, next: NextFunc
         return res.status(404).json({"message": "pls specify the id of the wallet"})
         
     }
-    // const wallets = await Wallet.findAll();
+    const wallets = await Wallet.findAll();
 
-    // let wallet = wallets.find((wallet: any)=> {
-    //     return wallet.id === walletId });
+    let wallet = wallets.find((wallet: any)=> {
+        return wallet.id === walletId });
 
-    // if(!wallet){
-    //         res.status(404).json({"message": "NO wallet with the specified id"});
-    //         throw new NOT_FOUND("NO wallet with the specified id");
-    //     }
+    if(!wallet){
+            res.status(404).json({"message": "NO wallet with the specified id"});
+            
+        }
         
     const requiredTransfers = await Transfer.findAll({where:{WalletId:walletId}});
 

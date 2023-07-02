@@ -1,6 +1,6 @@
 import { Wallet } from '../models/wallet';
 import { Transfer } from '../models/transfer';
-import { dollarRate } from '../utils/utils';
+
 import { NOT_FOUND, ForbiddenError } from '../commonErrors/Errors/Errors';
 import { HttpStatusCodes } from '../commonErrors/httpCode';
 import { NextFunction, Request, Response } from 'express';
@@ -60,38 +60,38 @@ export const makeTransfer = async(req: Request, res:Response, next: NextFunction
         }
     }
 
-    if (sourceCurrency === "naira" && destinationCurrency === "dollar"){
-        if( transferAmount > sourceAmount ){
-            return res.json(
-                {"message": "INSUFFICIENT FUNDS make sure ur transer amount in dollors and is less then or equal to ur acc balance"})
-        }else{
-            updatedWallet = await sourceWallet?.update(
-                { amount: sourceWallet?.amount - transferAmount },
-                { where: { id: source_id}}
-            )
-            await destinationWallet?.update(
-                {amount: destinationWallet?.amount + (transferAmount / dollarRate)},
-                {where: { id: destinationId }}
-            )
-        }
-    }
+    // if (sourceCurrency === "naira" && destinationCurrency === "dollar"){
+    //     if( transferAmount > sourceAmount ){
+    //         return res.json(
+    //             {"message": "INSUFFICIENT FUNDS make sure ur transer amount in dollors and is less then or equal to ur acc balance"})
+    //     }else{
+    //         updatedWallet = await sourceWallet?.update(
+    //             { amount: sourceWallet?.amount - transferAmount },
+    //             { where: { id: source_id}}
+    //         )
+    //         await destinationWallet?.update(
+    //             {amount: destinationWallet?.amount + (transferAmount / dollarRate)},
+    //             {where: { id: destinationId }}
+    //         )
+    //     }
+    // }
 
-    if (sourceCurrency === "dollar" && destinationCurrency === "naira"){
-        if( transferAmount > sourceAmount ){
-            return res.json(
-                {"message": "INSUFFICIENT FUNDS make sure ur transer amount  in naira and is less then or equal to ur acc balance"
-            })
-        }else{
-            updatedWallet = await sourceWallet?.update(
-                { amount: sourceWallet?.amount - transferAmount },
-                { where: { id: source_id}}
-            )
-            await destinationWallet?.update(
-                {amount: destinationWallet?.amount + (transferAmount * dollarRate)},
-                {where: { id: destinationId }}
-            )
-        }
-    }
+    // if (sourceCurrency === "dollar" && destinationCurrency === "naira"){
+    //     if( transferAmount > sourceAmount ){
+    //         return res.json(
+    //             {"message": "INSUFFICIENT FUNDS make sure ur transer amount  in naira and is less then or equal to ur acc balance"
+    //         })
+    //     }else{
+    //         updatedWallet = await sourceWallet?.update(
+    //             { amount: sourceWallet?.amount - transferAmount },
+    //             { where: { id: source_id}}
+    //         )
+    //         await destinationWallet?.update(
+    //             {amount: destinationWallet?.amount + (transferAmount * dollarRate)},
+    //             {where: { id: destinationId }}
+    //         )
+    //     }
+    // }
 
     let transfer = await Transfer.create({
        amount: transferAmount,

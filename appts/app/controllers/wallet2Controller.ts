@@ -1,7 +1,6 @@
 import { User } from '../models/user';
 import { Wallet } from '../models/wallet';
-import { getUserId, dollarRate } from '../utils/utils';
-import { ForbiddenError, SERVER_ERROR } from '../commonErrors/Errors/Errors';
+import { getUserId} from '../utils/utils';
 import { HttpStatusCodes } from '../commonErrors/httpCode';
 import { NextFunction, Request, Response } from 'express';
 
@@ -41,13 +40,6 @@ export const createNewWallet = async (req:Request, res: Response, next: NextFunc
 export const getWallets = async (req:Request, res: Response, next: NextFunction) => {
     
     const wallets = await Wallet.findAll({where: {UserId: await getUserId()}});
-    //console.log(await getUserId())
-
-    // const requiredWallets = wallets.find(async (wallets1:any) => {
-    //     console.log(wallets1.UserId, await getUserId())
-    //     return wallets1.UserId === await getUserId()
-        
-    // })
 
     if(wallets.length === 0){
         res.json({'message': "You dont have any wallet yet"})
@@ -67,19 +59,10 @@ export const getWalletById = async (req:Request, res: Response, next: NextFuncti
     const reqWallet = await Wallet.findAll({where: {UserId: await getUserId(),
                                                             id:id}});
 
-    // const wallets = await Wallet.findAll({where: {UserId: await getUserId()}});
 
-    // if(wallets.length === 0){
-    //     res.json({'message': "You dont have any wallet yet"})
-    // }
-    
-    // const id = req.params.id;
 
-    // const reqWallet = wallets.find((wallet: any)=> {
-    //     return wallet.id === id});
-
-    if(!reqWallet){
-        res.status(404).json({"message": "NO wallet with the specified id "})
+    if(!reqWallet || reqWallet.length == 0){
+        return res.status(404).json({"message": "NO wallet with the specified id "})
     }
 
     return res.json({

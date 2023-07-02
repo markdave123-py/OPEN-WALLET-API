@@ -1,8 +1,6 @@
 import { getUserId } from '../utils/utils';
 import { Wallet } from '../models/wallet';
 import { Deposit } from '../models/deposit';
-import { dollarRate } from '../utils/utils';
-import { NOT_FOUND, ForbiddenError} from '../commonErrors/Errors/Errors';
 import { HttpStatusCodes } from '../commonErrors/httpCode';
 import { NextFunction, Request, Response } from 'express';
 
@@ -46,25 +44,25 @@ export const makeDeposit = async(req:Request, res: Response, next: NextFunction)
         let walletCurrency = wallet!.currency.toLowerCase()
 
 
-    if ( currency === walletCurrency){
-        updatedWallet = await wallet?.update(
-            { amount: wallet?.amount + amount },
-            { where: { id: walletId}}
-        )
-    }
+    // if ( currency === walletCurrency){
+    //     updatedWallet = await wallet?.update(
+    //         { amount: wallet?.amount + amount },
+    //         { where: { id: walletId}}
+    //     )
+    // }
 
 
-    if (currency === "naira" && walletCurrency === "dollar"){
-        updatedWallet = await wallet?.update(
-            { amount: wallet?.amount + (amount / dollarRate)},
-            { where: { id: walletId}}
-    )}
+    // if (currency === "naira" && walletCurrency === "dollar"){
+    //     updatedWallet = await wallet?.update(
+    //         { amount: wallet?.amount + (amount / dollarRate)},
+    //         { where: { id: walletId}}
+    // )}
 
-    if (currency === "dollar" && walletCurrency === "naira"){
-        updatedWallet = await wallet?.update(
-            { amount: wallet?.amount + (amount * dollarRate) },
-            { where: { id: walletId}}
-    )}
+    // if (currency === "dollar" && walletCurrency === "naira"){
+    //     updatedWallet = await wallet?.update(
+    //         { amount: wallet?.amount + (amount * dollarRate) },
+    //         { where: { id: walletId}}
+    // )}
 
 
     let deposit = await Deposit.create({

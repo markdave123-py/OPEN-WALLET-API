@@ -1,5 +1,5 @@
 import { User } from '../models/user';
-import { userEmail, verifyJwt } from '../controllers/authUserController';
+import { userEmail } from '../controllers/authUserController';
 
 
 export const getUserId = async () => {
@@ -15,7 +15,7 @@ export const getUserId = async () => {
     return user?.id
 }
 
-export const dollarRate = 750.00;
+
 
 
 export const extractDate = (date: string)=>{
