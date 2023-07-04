@@ -42,22 +42,7 @@ export const makeDeposit = async(req:Request, res: Response, next: NextFunction)
 
         let walletCurrency = wallet!.currency.toLowerCase()
 
-        
-
-
-            // if (currency !== walletCurrency){
-                
-            //     //.catch((err:any) => console.log(err))
-                
-                
-            //     console.log(currency,amount,walletCurrency)
-            //     console.log(`this is the result ${convertedAmount}`)
-            //     updatedWallet = await wallet?.update(
-            //         { amount: wallet?.amount + convertedAmount },
-            //         { where: { id: walletId}}
-            //     )
-                
-            // }
+    
 
             try{
                 let response = currency !== walletCurrency

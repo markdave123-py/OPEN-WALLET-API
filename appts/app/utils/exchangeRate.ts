@@ -23,4 +23,10 @@ export const converter = {
         
         
     },
+    getSymbols:async () => {
+        const url = "https://api.apilayer.com/exchangerates_data/symbols"
+        const response = await fetch(url, converter.requestOptions)
+        return  response.json()
+        
+    }
 }

@@ -29,4 +29,6 @@ Deposit.init({
     }
 },{
     sequelize: myDatabase,
+    modelName: 'Deposit',
+    tableName: 'deposits'
 })

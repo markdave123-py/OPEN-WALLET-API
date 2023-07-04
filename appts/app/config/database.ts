@@ -9,6 +9,6 @@ export const myDatabase = new Sequelize(
     {
         logging: true,
         host: config.db.host,
-        dialect: 'mysql',
+        dialect: 'postgres',
     },
 )

@@ -33,4 +33,6 @@ Transfer.init({
 
 },{
     sequelize: myDatabase,
+    modelName: 'Transfer',
+    tableName: 'transfers'
 })

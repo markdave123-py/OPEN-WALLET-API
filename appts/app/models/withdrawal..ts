@@ -28,4 +28,6 @@ Withdrawal.init({
 
 },{
     sequelize: myDatabase,
+    modelName: 'Withdrawal',
+    tableName: 'withdrawals'
 })

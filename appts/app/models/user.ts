@@ -38,4 +38,6 @@ User.init({
 
 },{
     sequelize: myDatabase,
+    modelName: 'User',
+    tableName: 'users'
 })

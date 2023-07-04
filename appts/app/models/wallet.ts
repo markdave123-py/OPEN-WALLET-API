@@ -28,4 +28,6 @@ Wallet.init({
 
 },{
     sequelize: myDatabase,
+    modelName: 'Wallet',
+    tableName: 'wallets'
 })
