@@ -16,7 +16,7 @@ import {pdfRouter} from "./routes/pdf";
 
 
 
-const app = express();
+export const app = express();
 
 app.use(cors());
 
