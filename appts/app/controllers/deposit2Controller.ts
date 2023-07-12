@@ -22,20 +22,16 @@ export const makeDeposit = async(req:Request, res: Response, next: NextFunction)
         let currency = req.body.currency
         const amount = req.body.amount
 
-        if (!currency || !amount ){
-            return res.status(403).json({"message":"Provide the currency and amount to be deposited"});
-
-        }
+        
+        if (!currency || !amount ) return res.status(400).json({"message":"Provide the currency and amount to be deposited"});
+        
+        console.log('wallet error')
+        if (amount < 0) return res.status(403).json({"message":"you can't deposit an amount less than or equal to zero"});
 
         let wallet = await Wallet.findOne({where:{id: walletId}});
 
-        if (amount < 0){
-            res.status(403).json("you can't deposit an amount less than zero");
-
-        }
-
         if(!wallet){
-                res.status(404).json({"message": "NO wallet with the specified id  or You did not create the wallet with this id"});
+            return res.status(404).json({"message": "NO wallet with the specified id  or You did not create the wallet with this id"});
         }
 
         currency = currency.toLowerCase()
@@ -51,6 +47,8 @@ export const makeDeposit = async(req:Request, res: Response, next: NextFunction)
 
                 const convertedAmount = response.result ?? amount
 
+                console.log(convertedAmount)
+
 
                 updatedWallet = await wallet?.update(
                     { amount: wallet?.amount + convertedAmount },
@@ -63,11 +61,6 @@ export const makeDeposit = async(req:Request, res: Response, next: NextFunction)
         }
 
 
-        
-
-        
-
-
 
     let deposit = await Deposit.create({
                 currency,
@@ -78,7 +71,7 @@ export const makeDeposit = async(req:Request, res: Response, next: NextFunction)
         await deposit.save();
 
         return res.json({
-            code: HttpStatusCodes.OK,
+            code: HttpStatusCodes.CREATED,
             data: updatedWallet
         })
 
@@ -112,7 +105,7 @@ export const getAllDeposit = async(req: Request, res: Response, next: NextFuncti
         
         
         if(!requiredDeposits){
-            return res.status(404).json({"message": "No deposit with specified id "})     
+            return res.status(404).json({"message": "No deposit with specified id"})     
             }
 
         return res.json({

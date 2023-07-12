@@ -1,6 +1,11 @@
-import { sign } from "jsonwebtoken";
+import  jwt, { decode,sign }  from 'jsonwebtoken';
 
-export const genToken = (userId: any) => {
-    if (!userId) return new Error('user not defined');
-    return sign({id: userId}, `${process.env.ACCESS_TOKEN_SECRET}`, {expiresIn: '600000s'});
+
+export const genToken = (userEmail: string) => {
+    const accessToken = jwt.sign(
+        {"username": userEmail},
+        `${process.env.ACCESS_TOKEN_SECRET}`,
+        {"expiresIn": "6000000s"}
+    );
+    return accessToken
 }

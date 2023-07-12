@@ -42,7 +42,7 @@ app.use('/', transerRouter);
 app.use('/', transactionRouter);
 
 app.use('*', ( req: Request, res: Response, next: NextFunction) => {
-    console.log(req.route)
+    // console.log(req.route)
     res.status(404).json({
         message: 'route not found'
     });

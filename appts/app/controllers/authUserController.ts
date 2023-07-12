@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import bcrypt from "bcrypt"
 import { NextFunction, Request, Response } from 'express';
 import { ForbiddenError, NOT_FOUND, UNAUTHORIZED_ERROR } from '../commonErrors/Errors/Errors';
+import { genToken } from '../utils/genToken';
 
 
 dotenv.config();
@@ -23,11 +24,12 @@ export const handleLogin = async (req:Request, res:Response, next: NextFunction)
     const match = await bcrypt.compare(password, user.password);
 
     if(match) {
-        const accessToken = jwt.sign(
-            {"username": user.email},
-            `${process.env.ACCESS_TOKEN_SECRET}`,
-            {"expiresIn": "6000000s"}
-        );
+        const accessToken = genToken(user.email)
+        // const accessToken = jwt.sign(
+        //     {"username": user.email},
+        //     `${process.env.ACCESS_TOKEN_SECRET}`,
+        //     {"expiresIn": "6000000s"}
+        // );
         // console.log(res);
         
         res.json({"accessToken": accessToken});
@@ -39,11 +41,13 @@ export const handleLogin = async (req:Request, res:Response, next: NextFunction)
 export let userEmail :any
 
 export const verifyJwt =  (req: any, res: Response, next: NextFunction) => {
+    // console.log(req.headers)
     const authHeader = req.headers['authorization'];
     if (!authHeader) {
         res.status(401).json({"message": "pls provide access token"})
         throw new UNAUTHORIZED_ERROR("User Unauthorized");}
     const token = authHeader.split(' ')[1];
+
 
     jwt.verify(
         token,
