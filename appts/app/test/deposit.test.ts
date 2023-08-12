@@ -13,7 +13,7 @@ describe('Deposit Tests', () =>{
     let token:string = ''
     let postUrl;
     let getUrl;
-    let inputBody:IInputBody ;
+    let inputBody:IInputBody;
 
     beforeEach(() =>{
         //id fetched from  the database
