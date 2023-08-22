@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { controllerHandler } from "../middlewares/controllerHandler";
 import { transerSchema } from "../validation/schemas/schemas";
-import { getAllTransactions } from "../controllers/transactionController";
-import { generatePdf } from "../controllers/homeControllers";
+import { getAllTransactions } from "../controllers/transaction2Controller";
+import { generatePdf } from "../controllers/home2Controller";
 
 export const transactionRouter = Router() 
 
